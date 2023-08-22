@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analog-clock</title>
+    <style>
+      body {
+        background-color: black;
+      }
+      canvas {
+        border: 1px solid black;
+        position: absolute;
+        top: 20%;
+        left: 12%;
+        border-radius: 60%;
+        box-shadow: 0px 0px 10px 5px rgb(255, 2, 2);
+      }
+      .quote {
+        width: 500px;
+        color: white;
+        position: absolute;
+        top: 30%;
+        left: 53%;
+        font-family: "Times New Roman", Times, serif;
+        font-size: larger;
+        font-weight: bold;
+      }
+      #t {
+        margin-left: 350px;
+        color: yellow;
+        font-family: cursive;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas width="400px" height="400px" id="analog"></canvas>
+    <div class="quote">
+      <h1>
+        "Everyone has their own time clock in their life. Trust timing of your
+        life."
+      </h1>
+      <h3 id="t">~Time</h3>
+    </div>
+    <script>
+      var time = document.getElementById("analog");
+      var canva = time.getContext("2d");
+      var radius = time.height / 2;
+      canva.translate(radius, radius);
+      radius = radius * 0.94;
+      setInterval(totalfunc, 1000);
+      function totalfunc() {
+        face(canva, radius);
+        numbers(canva, radius);
+        hands(canva, radius);
+      }
+      function face(canva, radius) {
+        var graphic = canva.createRadialGradient(
+          0,
+          0,
+          radius * 0.85,
+          0,
+          0,
+          radius * 1.04
+        );
+        graphic.addColorStop(0, "gray");
+        graphic.addColorStop(0.5, "white");
+        graphic.addColorStop(1, "black");
+
+        canva.beginPath();
+        canva.arc(0, 0, radius, 0, Math.PI * 2);
+        canva.fillStyle = "black";
+        canva.fill();
+
+        canva.strokeStyle = graphic;
+        canva.lineWidth = radius * 0.1;
+        canva.stroke();
+
+        canva.beginPath();
+        canva.arc(0, 0, radius * 0.052, 0, Math.PI * 2);
+        canva.fillStyle = "white";
+        canva.fill();
+      }
+      function numbers(canva, radius) {
+        canva.font = radius * 0.13 + "px tahoma";
+        canva.textAlign = "center";
+        canva.textBaseline = "middle";
+        for (let num = 1; num < 13; num++) {
+          let ang = (num * Math.PI) / 6;
+          canva.rotate(ang);
+          canva.translate(0, -radius * 0.84);
+          canva.rotate(-ang);
+          canva.fillText(num, 0, 0);
+          canva.fillStyle = "white";
+          canva.rotate(ang);
+          canva.translate(0, radius * 0.84);
+          canva.rotate(-ang);
+        }
+      }
+      function hands(canva, radius) {
+        const now = new Date();
+        let hour = now.getHours();
+        let minute = now.getMinutes();
+        let second = now.getSeconds();
+        //hour
+        hour = hour % 12;
+        hour =
+          (hour * Math.PI) / 6 +
+          (minute * Math.PI) / (6 * 60) +
+          (second * Math.PI) / (360 * 60);
+        drawHand(canva, hour, radius * 0.5, radius * 0.07);
+        //minute
+        minute = (minute * Math.PI) / 30 + (second * Math.PI) / (30 * 60);
+        drawHand(canva, minute, radius * 0.7, radius * 0.07);
+        // second
+        second = (second * Math.PI) / 30;
+        drawHand(canva, second, radius * 0.8, radius * 0.02);
+      }
+      function drawHand(ctx, pos, length, width) {
+        canva.beginPath();
+        canva.lineWidth = width;
+        canva.lineCap = "round";
+        canva.moveTo(0, 0);
+        canva.rotate(pos);
+        canva.lineTo(0, -length);
+        canva.strokeStyle = "white";
+        canva.stroke();
+        canva.rotate(-pos);
+      }
+    </script>
+  </body>
+</html>
